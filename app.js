@@ -8,16 +8,16 @@ var chatter = require('./chatter')
 // application assets
 app.use(express.static('views'))
 
-app.use('/chat', chatter)
+io.on('connection', chatter);
 
 app.get('/', function(req, res) {
-	res.send("Hello World!")
+	res.sendFile(__dirname + '/index.html');
 })
 
-// make the server start and listen
-server.listen(3000, function () {
-  var host = server.address().address;
-  var port = server.address().port;
+var port = process.env.PORT || '3000';
+app.set('port', port);
 
+// make the server start and listen
+server.listen(port, function () {
   console.log("Chakubot is running on port " + port);
 });

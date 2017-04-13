@@ -1,0 +1,24 @@
+{
+  "name": "chakubot",
+  "version": "1.0.0",
+  "description": "Chatbot to help investors judge startups",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/exsmiley/chakubot.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/exsmiley/chakubot/issues"
+  },
+  "homepage": "https://github.com/exsmiley/chakubot#readme",
+  "dependencies": {
+    "express": "^4.15.2",
+    "http": "0.0.0",
+    "socket.io": "^1.7.3"
+  }
+}

@@ -1,6 +1,6 @@
 fs = require('fs');
 
-data = {}
+data = {"-1": {"next": [], "question": "error"}}
 
 function populate_data(s) {
 	lines = s.split("\n")
@@ -8,6 +8,7 @@ function populate_data(s) {
 		info = line.split("|")
 		nextNodes = info[1].split(",")
 		data[info[0]] = {"next": nextNodes, "question": info[2]}
+		data[-1]["next"].push([info[0]])
 	}
 }
 
@@ -28,11 +29,12 @@ class Interviewer {
 	constructor(client) {
 		this.client = client;
 		this.state = "beginning";
-		this.lastQuestion = -1;
+		this.lastQuestion = -1; // number of last question asked
 		this.numQuestionsAsked = 0;
+		this.maxNumQuestions = 5;
+		this.questionsAsked = new Set()
 		this.sendMessage("Hi! I'm Chakubot!");
 		this.sendMessage("Are you ready for your interview to begin?");
-		console.log(data)
 	}
 
 	/**
@@ -47,7 +49,7 @@ class Interviewer {
 				this.sendMessage("Okay! Let's start the interview!");
 
 				// TODO ask a first question
-				this.sendMessage(data[0]["question"])
+				this.sendMessage(data[0]["question"], 300)
 				this.lastQuestion = 0
 			} else {
 				this.sendMessage("Lameeeeeeeee!");
@@ -60,13 +62,45 @@ class Interviewer {
 			}
 		} else if(this.state == "question") {
 			// TODO send to get the similarity score
-			const nextPossible = data[this.lastQuestion]["next"]
-			const nextQ = nextPossible[Math.floor(Math.random()*nextPossible.length)]
+			if(this.numQuestionsAsked > this.maxNumQuestions) {
+				this.sendMessage("Thank you for taking the time for this interview! We will let you know of next steps shortly.");
+				this.state = "finished"
+			} else {
+				this.lastQuestion = this.getNextQuestionNumber(this.lastQuestion)
 
-			this.sendMessage(data[nextQ]["question"])
-			this.lastQuestion = nextQ
-			this.numQuestionsAsked += 1
+				if(this.lastQuestion = -1) {
+					this.lastQuestion = this.getNextQuestionNumber(-1) // -1 should be connected to everything
+				}
+
+				this.sendMessage(data[this.lastQuestion]["question"], 200)
+
+				this.questionsAsked.add(this.lastQuestion)
+				this.numQuestionsAsked += 1
+			}
+			
 		}
+	}
+
+	/**
+	 * Gets the number of another possible question but not one seen before
+	 * @param num the number of the previous question
+	 */
+	getNextQuestionNumber(num) {
+		const nextNums = data[num]["next"]
+		let nextPossible = []
+
+		for(num of nextNums) {
+			if(!this.questionsAsked.has(num)) {
+				nextPossible.push(num)
+			}
+		}
+
+		if(nextPossible.length == 0) {
+			return -1
+		} else {
+			return nextPossible[Math.floor(Math.random()*nextPossible.length)]
+		}
+
 	}
 
 	/**
@@ -74,8 +108,11 @@ class Interviewer {
 	 * @param message string of text to send
 	 * @param delay number of milliseconds to delay this message
 	 */
-	sendMessage(message, delay=0) {
+	sendMessage(message, delay) {
 		let that = this;
+		if(!delay) {
+			delay = 0
+		}
 		setTimeout(function(){
 			that.client.emit('chat', "Chakubot: " + message)
 		}, delay);

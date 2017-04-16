@@ -1,68 +1,68 @@
-So what are you working on?
-Have you raised funding?
-What makes new users try you?
-What competition do you fear most?
-What’s the worst thing that has happened?
-Will you reincorporate as a US company?
-What’s an impressive thing you have done?
-Where is the rocket science here?
-Why did you pick this idea to work on?
-Why do the reluctant users hold back?
-Who would you hire or how would you add to your team?
-What problems/hurdles are you anticipating?
-Who is “the boss”?
-What is the next step with the product evolution?
-What obstacles will you face and how will you overcome them?
-Who needs what you’re making?
-How does your product work in more detail?
-What are you going to do next?
-What do you understand that others don’t?
-Where do new users come from?
-How big an opportunity is there?
-Six months from now, what’s going to be your biggest problem?
-What’s the funniest thing that has happened to you?
-Tell us something surprising you have done?
-Who are your competitors?
-What’s new about what you make?
-How many users do you have?
-Why isn’t someone already doing this?
-What are the top things users want?
-What is your burn rate?
-How do you know customers need what you’re making?
-What domain expertise do you have?
-What, exactly, makes you different from existing options?
-What’s the conversion rate?
-What systems have you hacked?
-Who would use your product?
-How will customers and/or users find out about you?
-Why did your team get together?
-In what ways are you resourceful?
-What is your distribution strategy?
-What has surprised you about user behaviour?
-What part of your project are you going to build first?
-What resistance will they have to trying you and how will you overcome it?
-How are you understanding customer needs?
-What’s the biggest mistake you have made?
-Who might become competitors?
-What do you understand about your users?
-What is your user growth rate?
-What are the key things about your field that outsiders don’t understand?
-Who is going to be your first paying customer?
-If your startup succeeds, what additional areas might you be able to expand into?
-Who would be your next hire?
-How do you know people want this?
-Would you relocate to Silicon Valley?
-What do you know about this space/product others don’t know?
-How much money could you make per year?
-How long can you go before funding?
-How will you make money?
-Will your team stick at this?
-How much does customer acquisition cost?
-How did your team meet?
-Who in your team does what?
-How are you meeting customers?
-How many users are paying?
-How is your product different?
-Are you open to changing your idea?
-How do we know your team will stick together?
-What is your growth like?
+0|2,3,4|So what are you working on?
+1|2,3,4|Have you raised funding?
+2|2,3,4|What makes new users try you?
+3|2,3,4|What competition do you fear most?
+4|2,3,4|What’s the worst thing that has happened?
+5|2,3,4|Will you reincorporate as a US company?
+6|2,3,4|What’s an impressive thing you have done?
+7|2,3,4|Where is the rocket science here?
+8|2,3,4|Why did you pick this idea to work on?
+9|2,3,4|Why do the reluctant users hold back?
+10|2,3,4|Who would you hire or how would you add to your team?
+11|2,3,4|What problems/hurdles are you anticipating?
+12|2,3,4|Who is “the boss”?
+13|2,3,4|What is the next step with the product evolution?
+14|2,3,4|What obstacles will you face and how will you overcome them?
+15|2,3,4|Who needs what you’re making?
+16|2,3,4|How does your product work in more detail?
+17|2,3,4|What are you going to do next?
+18|2,3,4|What do you understand that others don’t?
+19|2,3,4|Where do new users come from?
+20|2,3,4|How big an opportunity is there?
+21|2,3,4|Six months from now, what’s going to be your biggest problem?
+22|2,3,4|What’s the funniest thing that has happened to you?
+23|2,3,4|Tell us something surprising you have done?
+24|2,3,4|Who are your competitors?
+25|2,3,4|What’s new about what you make?
+26|2,3,4|How many users do you have?
+27|2,3,4|Why isn’t someone already doing this?
+28|2,3,4|What are the top things users want?
+29|2,3,4|What is your burn rate?
+30|2,3,4|How do you know customers need what you’re making?
+31|2,3,4|What domain expertise do you have?
+32|2,3,4|What, exactly, makes you different from existing options?
+33|2,3,4|What’s the conversion rate?
+34|2,3,4|What systems have you hacked?
+35|2,3,4|Who would use your product?
+36|2,3,4|How will customers and/or users find out about you?
+37|2,3,4|Why did your team get together?
+38|2,3,4|In what ways are you resourceful?
+39|2,3,4|What is your distribution strategy?
+40|2,3,4|What has surprised you about user behaviour?
+41|2,3,4|What part of your project are you going to build first?
+42|2,3,4|What resistance will they have to trying you and how will you overcome it?
+43|2,3,4|How are you understanding customer needs?
+44|2,3,4|What’s the biggest mistake you have made?
+45|2,3,4|Who might become competitors?
+46|2,3,4|What do you understand about your users?
+47|2,3,4|What is your user growth rate?
+48|2,3,4|What are the key things about your field that outsiders don’t understand?
+49|2,3,4|Who is going to be your first paying customer?
+50|2,3,4|If your startup succeeds, what additional areas might you be able to expand into?
+51|2,3,4|Who would be your next hire?
+52|2,3,4|How do you know people want this?
+53|2,3,4|How many cofounders are there?
+54|2,3,4|What do you know about this space/product others don’t know?
+55|2,3,4|How much money could you make per year?
+56|2,3,4|How long can you go before funding?
+57|2,3,4|How will you make money?
+58|2,3,4|Will your team stick at this?
+59|2,3,4|How much does customer acquisition cost?
+60|2,3,4|How did your team meet?
+61|2,3,4|Who in your team does what?
+62|2,3,4|How are you meeting customers?
+63|2,3,4|How many users are paying?
+64|2,3,4|How is your product different?
+65|2,3,4|Are you open to changing your idea?
+66|2,3,4|How do we know your team will stick together?
+67|2,3,4|What is your growth like?

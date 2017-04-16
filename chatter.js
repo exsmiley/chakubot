@@ -1,3 +1,22 @@
+fs = require('fs');
+
+data = {}
+
+function populate_data(s) {
+	lines = s.split("\n")
+	for(line of lines) {
+		info = line.split("|")
+		nextNodes = info[1].split(",")
+		data[info[0]] = {"next": nextNodes, "question": info[2]}
+	}
+}
+
+fs.readFile('questions.txt', 'utf8', function (err,data) {
+  if (err) {
+    return console.log(err);
+  }
+  populate_data(data);
+});
 
 /**
  * Interviewer handles running the interview
@@ -10,8 +29,10 @@ class Interviewer {
 		this.client = client;
 		this.state = "beginning";
 		this.lastQuestion = -1;
+		this.numQuestionsAsked = 0;
 		this.sendMessage("Hi! I'm Chakubot!");
 		this.sendMessage("Are you ready for your interview to begin?");
+		console.log(data)
 	}
 
 	/**
@@ -26,6 +47,8 @@ class Interviewer {
 				this.sendMessage("Okay! Let's start the interview!");
 
 				// TODO ask a first question
+				this.sendMessage(data[0]["question"])
+				this.lastQuestion = 0
 			} else {
 				this.sendMessage("Lameeeeeeeee!");
 
@@ -36,7 +59,13 @@ class Interviewer {
 				},1500);
 			}
 		} else if(this.state == "question") {
-			// TODO
+			// TODO send to get the similarity score
+			const nextPossible = data[this.lastQuestion]["next"]
+			const nextQ = nextPossible[Math.floor(Math.random()*nextPossible.length)]
+
+			this.sendMessage(data[nextQ]["question"])
+			this.lastQuestion = nextQ
+			this.numQuestionsAsked += 1
 		}
 	}
 

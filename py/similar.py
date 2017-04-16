@@ -20,6 +20,10 @@ def main(num, text):
 				weights.append(float(info[1]))
 				all_documents.append(text)
 
+		if len(weights) == 0:
+			pass
+			# TODO need to make answers to all of the questions
+
 	weights = np.array(weights)
 	tfidf_vectorizer = TfidfVectorizer()
 	tfidf_matrix = tfidf_vectorizer.fit_transform(all_documents)

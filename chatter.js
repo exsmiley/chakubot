@@ -1,23 +1,34 @@
-fs = require('fs');
+var fs = require('fs');
+var analyzer = require('./analyzer')
 
-data = {"-1": {"next": [], "question": "error"}}
+// LOAD initial data
+questions = {"-1": {"next": [], "question": "error"}}
+neutal = []
 
-function populate_data(s) {
+function populate_questions(s) {
 	lines = s.split("\n")
 	for(line of lines) {
 		info = line.split("|")
 		nextNodes = info[1].split(",")
-		data[info[0]] = {"next": nextNodes, "question": info[2]}
-		data[-1]["next"].push([info[0]])
+		questions[info[0]] = {"next": nextNodes, "question": info[2]}
+		questions[-1]["next"].push([info[0]])
 	}
 }
 
-fs.readFile('questions.txt', 'utf8', function (err,data) {
-  if (err) {
-    return console.log(err);
-  }
-  populate_data(data);
+fs.readFile('txt/questions.txt', 'utf8', function (err,data) {
+	if (err) {
+		return console.log(err);
+	}
+	populate_questions(data);
 });
+
+fs.readFile('txt/neutral.txt', 'utf8', function (err,data) {
+	if (err) {
+		return console.log(err);
+	}
+	neutral = data.split("\n")
+});
+
 
 /**
  * Interviewer handles running the interview
@@ -33,6 +44,11 @@ class Interviewer {
 		this.numQuestionsAsked = 0;
 		this.maxNumQuestions = 5;
 		this.questionsAsked = new Set()
+
+		// rolling average of similarity score
+		this.totalScore = 0;
+		this.numScores = 0;
+
 		this.sendMessage("Hi! I'm Chakubot!");
 		this.sendMessage("Are you ready for your interview to begin?");
 	}
@@ -44,13 +60,16 @@ class Interviewer {
 	handleMessage(message) {
 		let that = this;
 		this.logIncomingMessage(message);
+
+		message = message.toLowerCase()
 		if(this.state === "beginning") {
+			// TODO refine the yes/no detection
 			if(message.includes("yes")) {
 				this.state = "question";
 				this.sendMessage("Okay! Let's start the interview!");
 
 				// TODO ask a first question
-				this.sendMessage(data[0]["question"], 300)
+				this.sendMessage(questions[0]["question"], 300)
 				this.lastQuestion = 0
 			} else {
 				this.sendMessage("Lameeeeeeeee!");
@@ -62,19 +81,33 @@ class Interviewer {
 				},1500);
 			}
 		} else if(this.state == "question") {
-			// TODO send to get the similarity score
+			// Gets the similarity score (TODO change number once have responses)
+			analyzer.findSimilar(0, message, function(results) {
+				that.totalScore += Number(results)
+				that.numScores += 1
+			})
+
+			// handle advancing the question
 			if(this.numQuestionsAsked >= this.maxNumQuestions) {
 				this.sendMessage("Thank you for taking the time for this interview! We will let you know of next steps shortly.");
 				this.state = "finished"
 				this.lastQuestion = -2
+
+				// give a moment for the last similarity score to come in
+				setTimeout(function(){
+					console.log("The score is: ", that.totalScore/that.numScores)
+				},1500);
 			} else {
+				// add filler sentences between questions
+				this.sendMessage(neutral[Math.floor(Math.random()*neutral.length)])
+
 				this.lastQuestion = this.getNextQuestionNumber(this.lastQuestion)
 
 				if(this.lastQuestion = -1) {
 					this.lastQuestion = this.getNextQuestionNumber(-1) // -1 should be connected to everything
 				}
 
-				this.sendMessage(data[this.lastQuestion]["question"], 200)
+				this.sendMessage(questions[this.lastQuestion]["question"], 500)
 
 				this.questionsAsked.add(this.lastQuestion)
 				this.numQuestionsAsked += 1
@@ -88,7 +121,7 @@ class Interviewer {
 	 * @param num the number of the previous question
 	 */
 	getNextQuestionNumber(num) {
-		const nextNums = data[num]["next"]
+		const nextNums = questions[num]["next"]
 		let nextPossible = []
 
 		for(num of nextNums) {
@@ -112,7 +145,7 @@ class Interviewer {
 	logIncomingMessage(message) {
 		var t = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '') 
 		var s = t + "|" + this.client.id + "|" + this.lastQuestion + "|" + message + "\n";
-		fs.appendFile('log.txt', s, function (err) {
+		fs.appendFile('txt/log.txt', s, function (err) {
 		  if (err) throw err;
 		});
 	}

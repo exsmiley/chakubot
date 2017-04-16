@@ -14,7 +14,7 @@ app.get('/', function(req, res) {
 	res.sendFile(__dirname + '/index.html');
 })
 
-var port = process.env.PORT || '3000';
+const port = process.env.PORT || '3000';
 app.set('port', port);
 
 // make the server start and listen

@@ -43,6 +43,7 @@ class Interviewer {
 	 */
 	handleMessage(message) {
 		let that = this;
+		this.logIncomingMessage(message);
 		if(this.state === "beginning") {
 			if(message.includes("yes")) {
 				this.state = "question";
@@ -62,9 +63,10 @@ class Interviewer {
 			}
 		} else if(this.state == "question") {
 			// TODO send to get the similarity score
-			if(this.numQuestionsAsked > this.maxNumQuestions) {
+			if(this.numQuestionsAsked >= this.maxNumQuestions) {
 				this.sendMessage("Thank you for taking the time for this interview! We will let you know of next steps shortly.");
 				this.state = "finished"
+				this.lastQuestion = -2
 			} else {
 				this.lastQuestion = this.getNextQuestionNumber(this.lastQuestion)
 
@@ -104,6 +106,18 @@ class Interviewer {
 	}
 
 	/**
+	 * Logs the message from the client with some metadata
+	 * @param message string message to log
+	 */
+	logIncomingMessage(message) {
+		var t = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '') 
+		var s = t + "|" + this.client.id + "|" + this.lastQuestion + "|" + message + "\n";
+		fs.appendFile('log.txt', s, function (err) {
+		  if (err) throw err;
+		});
+	}
+
+	/**
 	 * Sends a message to the client and appends a prefix for the bot name
 	 * @param message string of text to send
 	 * @param delay number of milliseconds to delay this message
@@ -123,6 +137,7 @@ class Interviewer {
 const chat = function(client) {
 	console.log("a user connected")
 	let interviewer = new Interviewer(client)
+	interviewer.logIncomingMessage("user connected")
 
 	client.on('chat', function(message) {
 		client.emit('chat', "You: " + message);
@@ -136,6 +151,7 @@ const chat = function(client) {
 
 	client.on('disconnect', function(){
 		console.log('user disconnected');
+		interviewer.logIncomingMessage('user disconnected')
 		interviewer = null;
 	});
 }

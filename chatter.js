@@ -4,10 +4,11 @@ var analyzer = require('./analyzer')
 // LOAD initial data
 questions = {"-1": {"next": [], "question": "error"}}
 neutal = []
+cuss = new Set();
 
 function populate_questions(s) {
 	lines = s.split("\n")
-	for(line of lines) {
+	for(let line of lines) {
 		info = line.split("|")
 		nextNodes = info[1].split(",")
 		questions[info[0]] = {"next": nextNodes, "question": info[2]}
@@ -26,9 +27,46 @@ fs.readFile('txt/neutral.txt', 'utf8', function (err,data) {
 	if (err) {
 		return console.log(err);
 	}
-	neutral = data.split("\n")
+	neutral = data.split("\n");
 });
 
+fs.readFile('txt/cuss.txt', 'utf8', function (err,data) {
+	if (err) {
+		return console.log(err);
+	}
+	cuss = new Set(data.split("\n"));
+});
+
+/**
+ * Finds out if the message has an English cuss word
+ * @param message to find cuss words in
+ * @return true if there is a cuss word
+ */
+function containsCussWord(message) {
+	const words = message.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"").replace(/\s{2,}/g," ").split(" ");
+	let hasWord = false;
+
+	for(let word of words) {
+		if(cuss.has(word)) {
+			hasWord = true;
+		}
+	}
+
+	return hasWord
+}
+
+function isYes(message) {
+	const yesWords = ["yes", "yeah", "of course", "mhm", "sure"];
+	let yes = false;
+
+	for(let word of yesWords) {
+		if(message.includes(word)) {
+			yes = true;
+		}
+	}
+
+	return yes;
+}
 
 /**
  * Interviewer handles running the interview
@@ -49,8 +87,13 @@ class Interviewer {
 		this.totalScore = 0;
 		this.numScores = 0;
 
+		// keep tally of mean things
+		this.meanWordsSaid = 0;
+
 		this.sendMessage("Hi! I'm Chakubot!");
 		this.sendMessage("Are you ready for your interview to begin?");
+		this.lastAskedWords = "Are you ready for your interview to begin?"
+		// TODO message about general understanding
 	}
 
 	/**
@@ -61,18 +104,25 @@ class Interviewer {
 		let that = this;
 		this.logIncomingMessage(message);
 
-		message = message.toLowerCase()
-		if(this.state === "beginning") {
-			// TODO refine the yes/no detection
-			if(message.includes("yes")) {
-				this.state = "question";
-				this.sendMessage("Okay! Let's start the interview!");
+		if(this.state === "finished") {
+			return
+		}
 
-				// TODO ask a first question
+		message = message.toLowerCase()
+		if(containsCussWord(message)) {
+			this.handleBadWord();
+		} else if(this.state === "beginning") {
+			if(isYes(message)) {
+				this.state = "question";
+				this.sendMessage("Awesome! Let's start the interview!");
+
+				// ask a first question
 				this.sendMessage(questions[0]["question"], 300)
 				this.lastQuestion = 0
-			} else {
-				this.sendMessage("Lameeeeeeeee!");
+				this.numQuestionsAsked += 1
+				this.lastAskedWords = questions[0]["question"]
+			} else { // TODO see if need a no and maybe Q/A?
+				this.sendMessage("Okay! Take your time.");
 
 				// delay 1.5 seconds before sending next message
 				setTimeout(function(){
@@ -81,7 +131,7 @@ class Interviewer {
 				},1500);
 			}
 		} else if(this.state == "question") {
-			// Gets the similarity score (TODO change number once have responses)
+			// Gets the similarity score (TODO change number once have responses and use relevance score)
 			analyzer.findSimilar(0, message, function(results) {
 				that.totalScore += Number(results)
 				that.numScores += 1
@@ -89,7 +139,9 @@ class Interviewer {
 
 			// handle advancing the question
 			if(this.numQuestionsAsked >= this.maxNumQuestions) {
-				this.sendMessage("Thank you for taking the time for this interview! We will let you know of next steps shortly.");
+				this.sendMessage("Thank you for taking the time for this interview!")
+				this.sendMessage("I will report this to upper management and they will get back to you shortly.", 200);
+				this.botLeave()
 				this.state = "finished"
 				this.lastQuestion = -2
 
@@ -99,7 +151,7 @@ class Interviewer {
 				},1500);
 			} else {
 				// add filler sentences between questions
-				this.sendMessage(neutral[Math.floor(Math.random()*neutral.length)])
+				this.sendMessage(neutral[Math.floor(Math.random()*neutral.length)]) // TODO check randomness
 
 				this.lastQuestion = this.getNextQuestionNumber(this.lastQuestion)
 
@@ -108,6 +160,7 @@ class Interviewer {
 				}
 
 				this.sendMessage(questions[this.lastQuestion]["question"], 500)
+				this.lastAskedWords = questions[this.lastQuestion]["question"]
 
 				this.questionsAsked.add(this.lastQuestion)
 				this.numQuestionsAsked += 1
@@ -163,6 +216,41 @@ class Interviewer {
 		setTimeout(function(){
 			that.client.emit('chat', "Chakubot: " + message)
 		}, delay);
+	}
+
+	/**
+	 * Sends a message to the client dealing with the level of badness
+	 */
+	handleBadWord() {
+		this.meanWordsSaid += 1;
+
+		if(this.meanWordsSaid === 1) {
+			this.sendMessage("Please watch your language. Thanks!")
+		} else if(this.meanWordsSaid === 2) {
+			this.sendMessage("I would appreciate it if you did not use words like that.")
+		} else if(this.meanWordsSaid === 3) {
+			this.sendMessage("Please act professional. That use of language is unacceptable.")
+		} else if(this.meanWordsSaid === 4) {
+			this.sendMessage("Do you kiss your mother with that mouth?!")
+		} else if(this.meanWordsSaid >= 5) {
+			this.botLeave()
+			this.state = "finished"
+		}
+
+		// restate last question for the user
+		if(this.meanWordsSaid < 5) {
+			this.sendMessage(this.lastAskedWords, 300)
+		}
+	}
+
+	/**
+	 * Sends a message to the client saying Chakubot left the chatroom
+	 */
+	botLeave() {
+		let that = this;
+		setTimeout(function(){
+			that.client.emit('chat', "[Chakubot left the chatroom]")
+		}, 300);
 	}
 }
 

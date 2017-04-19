@@ -1,2 +1,5 @@
 https://jamescun.github.io/iPG/
 https://techcrunch.com/2012/04/27/be-concise-the-top-questions-asked-at-a-y-combinator-interview/
+
+http://ccc.inaoep.mx/~villasen/bib/dmello-roman07.pdf
+https://web.stanford.edu/~jurafsky/NLPCourseraSlides.html

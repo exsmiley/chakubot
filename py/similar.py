@@ -12,7 +12,7 @@ def main(num, text):
 	all_documents = [text.lower()]
 	weights = []
 
-	with open("py/test.txt") as f:
+	with open("py/answers.txt") as f:
 		for line in f:
 			info = line.split("|")
 			i, rating, text = (info[0], info[1], info[2])

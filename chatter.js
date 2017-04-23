@@ -2,25 +2,32 @@ var fs = require('fs');
 var analyzer = require('./analyzer')
 
 // LOAD initial data
-questions = {"-1": {"next": [], "question": "error"}}
+questionData = {"-1": {"next": [], "questions": [], "topic": "none"}}
 neutal = []
 cuss = new Set();
 
-function populate_questions(s) {
+function populateQuestions(s) {
 	lines = s.split("\n")
 	for(let line of lines) {
 		info = line.split("|")
+		index = info[0]
 		nextNodes = info[1].split(",")
-		questions[info[0]] = {"next": nextNodes, "question": info[2]}
-		questions[-1]["next"].push([info[0]])
+		topic = info[2]
+		qs = info.slice(3) // gets all of them after and including 3
+		questionData[index] = {"next": nextNodes, "questions": qs}
+		questionData[-1]["next"].push([index])
 	}
+}
+
+function selectQuestion(i) {
+	questions = questionData[i]["questions"]
 }
 
 fs.readFile('txt/questions.txt', 'utf8', function (err,data) {
 	if (err) {
 		return console.log(err);
 	}
-	populate_questions(data);
+	populateQuestions(data);
 });
 
 fs.readFile('txt/neutral.txt', 'utf8', function (err,data) {
@@ -117,10 +124,11 @@ class Interviewer {
 				this.sendMessage("Awesome! Let's start the interview!");
 
 				// ask a first question
-				this.sendMessage(questions[0]["question"], 300)
+				question = selectQuestion(0)
+				this.sendMessage(question, 300)
 				this.lastQuestion = 0
 				this.numQuestionsAsked += 1
-				this.lastAskedWords = questions[0]["question"]
+				this.lastAskedWords = question
 			} else { // TODO see if need a no and maybe Q/A?
 				this.sendMessage("Okay! Take your time.");
 
@@ -159,8 +167,8 @@ class Interviewer {
 					this.lastQuestion = this.getNextQuestionNumber(-1) // -1 should be connected to everything
 				}
 
-				this.sendMessage(questions[this.lastQuestion]["question"], 500)
-				this.lastAskedWords = questions[this.lastQuestion]["question"]
+				this.sendMessage(questionData[this.lastQuestion]["question"], 500)
+				this.lastAskedWords = questionData[this.lastQuestion]["question"]
 
 				this.questionsAsked.add(this.lastQuestion)
 				this.numQuestionsAsked += 1
@@ -174,7 +182,7 @@ class Interviewer {
 	 * @param num the number of the previous question
 	 */
 	getNextQuestionNumber(num) {
-		const nextNums = questions[num]["next"]
+		const nextNums = questionData[num]["next"]
 		let nextPossible = []
 
 		for(num of nextNums) {

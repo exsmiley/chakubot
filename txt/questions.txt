@@ -20,7 +20,7 @@
 18||tech|What is your current stage of development?
 19||founder|What does your company's equity structure look like?
 20||founder|How did you come up with this business?
-21||founder|How did you meet each other?|How long have you known each other?
+21||founder|How did you meet each other?|How long have you guys known each other?
 22||founder|What does each founder do for the company?
 23||founder|Who is fulltime and parttime?
 24||founder|Can you send me linkedin URLs of all of your team members?

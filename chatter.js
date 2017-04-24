@@ -3,11 +3,16 @@ var analyzer = require('./analyzer')
 
 // LOAD initial data
 questionData = {"-1": {"next": [], "questions": [], "topic": "none"}}
+topics = {} // topic: [index, index, ...]
 neutal = []
 cuss = new Set();
 
-function populateQuestions(s) {
-	lines = s.split("\n")
+/**
+ * Reads in data from a file and parses out the questions
+ * @param data string from reading the file
+ */
+function populateQuestions(data) {
+	lines = data.split("\n")
 	for(let line of lines) {
 		info = line.split("|")
 		index = info[0]
@@ -16,12 +21,16 @@ function populateQuestions(s) {
 		qs = info.slice(3) // gets all of them after and including 3
 		questionData[index] = {"next": nextNodes, "questions": qs}
 		questionData[-1]["next"].push([index])
+
+		if(topics.hasOwnProperty(topic)) {
+			topics[topic].push(index)
+		} else {
+			topics[topic] = [index]
+		}
 	}
 }
 
-function selectQuestion(i) {
-	questions = questionData[i]["questions"]
-}
+// READ FILES
 
 fs.readFile('txt/questions.txt', 'utf8', function (err,data) {
 	if (err) {
@@ -62,6 +71,11 @@ function containsCussWord(message) {
 	return hasWord
 }
 
+/**
+ * Finds out if the message says yes in it
+ * @param message to see if is yes
+ * @return true if the question says yes
+ */
 function isYes(message) {
 	const yesWords = ["yes", "yeah", "of course", "mhm", "sure"];
 	let yes = false;
@@ -76,6 +90,16 @@ function isYes(message) {
 }
 
 /**
+ * Selects a question with the given id. Randomizes if multiple
+ * @param id the id of the question
+ * @return string question
+ */
+function selectQuestion(id) {
+	questions = questionData[id]["questions"]
+	return questions[Math.floor(Math.random()*questions.length)]
+}
+
+/**
  * Interviewer handles running the interview
  * @param client socket.io socket object to send messages to
  */
@@ -85,10 +109,16 @@ class Interviewer {
 	constructor(client) {
 		this.client = client;
 		this.state = "beginning";
-		this.lastQuestion = -1; // number of last question asked
+		this.lastQuestionNumber = -1; // number of last question asked
 		this.numQuestionsAsked = 0;
 		this.maxNumQuestions = 5;
 		this.questionsAsked = new Set()
+
+		// set up topic tallies
+		this.topicTallies = {}
+		for(let topic in topics) {
+			this.topicTallies[topic] = 0;
+		}
 
 		// rolling average of similarity score
 		this.totalScore = 0;
@@ -124,9 +154,10 @@ class Interviewer {
 				this.sendMessage("Awesome! Let's start the interview!");
 
 				// ask a first question
-				question = selectQuestion(0)
+				const question = selectQuestion(0)
 				this.sendMessage(question, 300)
-				this.lastQuestion = 0
+				this.incrementTopicTally(0)
+				this.lastQuestionNumber = 0
 				this.numQuestionsAsked += 1
 				this.lastAskedWords = question
 			} else { // TODO see if need a no and maybe Q/A?
@@ -148,10 +179,10 @@ class Interviewer {
 			// handle advancing the question
 			if(this.numQuestionsAsked >= this.maxNumQuestions) {
 				this.sendMessage("Thank you for taking the time for this interview!")
-				this.sendMessage("I will report this to upper management and they will get back to you shortly.", 200);
-				this.botLeave()
+				this.sendMessage("I will report this to upper management and they will get back to you shortly.", 400);
+				setTimeout(function(){ that.botLeave(); },700);
 				this.state = "finished"
-				this.lastQuestion = -2
+				this.lastQuestionNumber = -2
 
 				// give a moment for the last similarity score to come in
 				setTimeout(function(){
@@ -161,16 +192,17 @@ class Interviewer {
 				// add filler sentences between questions
 				this.sendMessage(neutral[Math.floor(Math.random()*neutral.length)]) // TODO check randomness
 
-				this.lastQuestion = this.getNextQuestionNumber(this.lastQuestion)
+				this.lastQuestionNumber = this.getNextQuestionNumber(this.lastQuestionNumber)
 
-				if(this.lastQuestion = -1) {
-					this.lastQuestion = this.getNextQuestionNumber(-1) // -1 should be connected to everything
+				if(this.lastQuestionNumber = -1) {
+					this.lastQuestionNumber = this.getNextQuestionNumber(-1) // -1 should be connected to everything
 				}
+				const question = selectQuestion(this.lastQuestionNumber)
+				this.sendMessage(question, 500)
+				this.incrementTopicTally(this.lastQuestionNumber)
+				this.lastAskedWords = question
 
-				this.sendMessage(questionData[this.lastQuestion]["question"], 500)
-				this.lastAskedWords = questionData[this.lastQuestion]["question"]
-
-				this.questionsAsked.add(this.lastQuestion)
+				this.questionsAsked.add(this.lastQuestionNumber)
 				this.numQuestionsAsked += 1
 			}
 			
@@ -185,18 +217,67 @@ class Interviewer {
 		const nextNums = questionData[num]["next"]
 		let nextPossible = []
 
-		for(num of nextNums) {
+		for(let num of nextNums) {
 			if(!this.questionsAsked.has(num)) {
 				nextPossible.push(num)
 			}
 		}
 
 		if(nextPossible.length == 0) {
-			return -1
+			// find new topic
+			const oldTopic = questions[num]["topic"]
+
+			// 15% chance of a transition of topic
+			if(this.topicTallies[oldTopic] >= 3 || Math.random() > 0.85) {
+				// randomly choose new topic
+				const newTopic = this.chooseNewTopic()
+
+				if(newTopic == -1) {
+					return -1
+				} else {
+					nextPossible = [];
+
+					for(let num of topics) {
+						if(!this.questionsAsked.has(num)) {
+							nextPossible.push(num)
+						}
+					}
+
+					return nextPossible[Math.floor(Math.random()*nextPossible.length)]
+				}
+			}
 		} else {
 			return nextPossible[Math.floor(Math.random()*nextPossible.length)]
 		}
 
+	}
+
+	/**
+	 * Increments the topic tally for the question with id num
+	 * @param num the number of the new question
+	 */
+	incrementTopicTally(num) {
+		this.topicTallies[questionData[num]["topic"]] += 1
+	}
+
+	/**
+	 * Increments the topic tally for the question with id num
+	 * @param num the number of the new question
+	 */
+	chooseNewTopic() {
+		let possibleTopics = []
+
+		for(let topic in this.topicTallies) {
+			if(this.topicTallies[topic] < 3) {
+				possibleTopics.push(topic)
+			}
+		}
+
+		if(possibleTopics.length == 0) {
+			return -1
+		}
+
+		return possibleTopics[Math.floor(Math.random()*possibleTopics.length)]
 	}
 
 	/**
@@ -205,7 +286,7 @@ class Interviewer {
 	 */
 	logIncomingMessage(message) {
 		var t = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '') 
-		var s = t + "|" + this.client.id + "|" + this.lastQuestion + "|" + message + "\n";
+		var s = t + "|" + this.client.id + "|" + this.lastQuestionNumber + "|" + message + "\n";
 		fs.appendFile('txt/log.txt', s, function (err) {
 		  if (err) throw err;
 		});

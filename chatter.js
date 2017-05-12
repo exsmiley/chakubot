@@ -77,7 +77,7 @@ function containsCussWord(message) {
  * @return true if the question says yes
  */
 function isYes(message) {
-	const yesWords = ["yes", "yeah", "of course", "mhm", "sure"];
+	const yesWords = ["yes", "yeah", "of course", "mhm", "sure", "fine"];
 	let yes = false;
 
 	for(let word of yesWords) {
@@ -86,7 +86,25 @@ function isYes(message) {
 		}
 	}
 
-	return yes;
+	return yes && !isNo(message);
+}
+
+/**
+ * Finds out if the message says no in it
+ * @param message to see if is no
+ * @return true if the question says no
+ */
+function isNo(message) {
+	const noWords = ["no", "nope", "never", "of course not", "uh-uh", "nah", "nay", "negative", "not in a million years", 'fat chance'];
+	let no = false;
+
+	for(let word of noWords) {
+		if(message.includes(word)) {
+			no = true;
+		}
+	}
+
+	return no;
 }
 
 /**
@@ -128,9 +146,9 @@ class Interviewer {
 		this.meanWordsSaid = 0;
 
 		this.sendMessage("Hi! I'm Chakubot!");
+		this.sendMessage("I will be asking you around " + this.maxNumQuestions + " questions.");
 		this.sendMessage("Are you ready for your interview to begin?");
 		this.lastAskedWords = "Are you ready for your interview to begin?"
-		// TODO message about general understanding
 	}
 
 	/**
@@ -160,7 +178,7 @@ class Interviewer {
 				this.lastQuestionNumber = 0
 				this.numQuestionsAsked += 1
 				this.lastAskedWords = question
-			} else { // TODO see if need a no and maybe Q/A?
+			} else if(isNo(message)) { // TODO see if need a no and maybe Q/A?
 				this.sendMessage("Okay! Take your time.");
 
 				// delay 1.5 seconds before sending next message
@@ -168,6 +186,10 @@ class Interviewer {
 					if(that.state === "beginning")
 						that.sendMessage("Now are you ready for the interview?");
 				},1500);
+			} else {
+				this.sendMessage("I'm not sure if you understood what I said.");
+				this.sendMessage("I will be asking you around " + this.maxNumQuestions + " questions to see if I think your idea is something we would like to invest in.");
+				this.sendMessage("Are you ready for your interview to begin?");
 			}
 		} else if(this.state == "question") {
 			// Gets the similarity score (TODO change number once have responses and use relevance score)

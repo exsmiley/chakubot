@@ -3,3 +3,8 @@ https://techcrunch.com/2012/04/27/be-concise-the-top-questions-asked-at-a-y-comb
 
 http://ccc.inaoep.mx/~villasen/bib/dmello-roman07.pdf
 https://web.stanford.edu/~jurafsky/NLPCourseraSlides.html
+https://hackernoon.com/natural-language-pipeline-for-chatbots-897bda41482
+
+https://github.com/facebookresearch/fastText/blob/master/pretrained-vectors.md?utm_campaign=buffer&utm_content=buffer0df9b&utm_medium=social&utm_source=linkedin.com
+
+http://mp.weixin.qq.com/s/ZotAU1q7-54zJ1-3V6G-NQ

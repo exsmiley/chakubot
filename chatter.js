@@ -131,6 +131,8 @@ class Interviewer {
 		this.numQuestionsAsked = 0;
 		this.maxNumQuestions = 5;
 		this.questionsAsked = new Set()
+		this.companyId = client.request.session.companyId
+		// TODO query company name from database
 
 		// set up topic tallies
 		this.topicTallies = {}

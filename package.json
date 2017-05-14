@@ -18,8 +18,11 @@
   "homepage": "https://github.com/exsmiley/chakubot#readme",
   "dependencies": {
     "express": "^4.15.2",
+    "express-session": "^1.15.2",
     "http": "0.0.0",
     "python-shell": "^0.4.0",
+    "react": "^15.5.4",
+    "react-router-dom": "^4.1.1",
     "socket.io": "^1.7.3"
   }
 }

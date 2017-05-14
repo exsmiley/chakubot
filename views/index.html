@@ -1,39 +1,47 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
-  <head>
-    <title>Chakubot chat</title>
-    <style>
-      * { margin: 0; padding: 0; box-sizing: border-box; }
-      body { font: 13px Helvetica, Arial; }
-      form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
-      form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
-      form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
-      #messages { list-style-type: none; margin: 0; padding: 0; }
-      #messages li { padding: 5px 10px; }
-      #messages li:nth-child(odd) { background: #eee; }
-      #messages { margin-bottom: 40px }
-    </style>
-  </head>
-  <body>
-    <ul id="messages"></ul>
-    <form action="">
-      <input id="m" autocomplete="off" /><button>Send</button>
-    </form>
-    <script src="https://cdn.socket.io/socket.io-1.7.3.js"></script>
-    <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
-    <script>
-      $(function () {
-        var socket = io();
-        $('form').submit(function(){
-          socket.emit('chat', $('#m').val());
-          $('#m').val('');
-          return false;
-        });
-        socket.on('chat', function(msg){
-          $('#messages').append($('<li>').text(msg));
-          window.scrollTo(0, document.body.scrollHeight);
-        });
-      });
-    </script>
-  </body>
+<head>
+    <title>Chakubot - Chatbot for helping Investors</title>
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Angular.js files -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.25/angular-route.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-sanitize.js""></script>
+    <script src="main.js"></script>
+    <script src="js/mainController.js"></script>
+
+    <!-- Let's it have a pretty url -->
+    <base href="/">
+</head>
+
+<body ng-app="chakubot" ng-controller="mainController">
+    <!-- header -->
+    <nav class="navbar navbar-default">
+      <div class="container">
+          <div class="navbar-header">
+                <a class="navbar-brand" href="/">Chakubot</a>
+            </div>
+        </div>
+    </nav>
+
+    
+    <div id="main">
+    <!-- angular templating -->
+    <!-- this is where content will be injected -->
+        <div ng-view></div>
+    </div>
+
+    <div class="container">
+        <footer>
+            <p> © 2017 Company, Inc. · </p>
+        </footer>
+    </div>
+</body>
 </html>

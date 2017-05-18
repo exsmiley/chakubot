@@ -151,6 +151,7 @@ class Interviewer {
 		this.sendMessage("I will be asking you around " + this.maxNumQuestions + " questions.");
 		this.sendMessage("Are you ready for your interview to begin?");
 		this.lastAskedWords = "Are you ready for your interview to begin?"
+		this.log = []
 	}
 
 	/**
@@ -242,10 +243,11 @@ class Interviewer {
 		let nextPossible = []
 
 		for(let num of nextNums) {
-			if(!this.questionsAsked.has(num)) {
+			if(!this.questionsAsked.has(num) && !isNaN(num)) {
 				nextPossible.push(num)
 			}
 		}
+		console.log(nextPossible)
 
 		if(nextPossible.length == 0) {
 			// find new topic
@@ -266,7 +268,7 @@ class Interviewer {
 							nextPossible.push(num)
 						}
 					}
-
+					console.log(nextPossible)
 					return nextPossible[Math.floor(Math.random()*nextPossible.length)]
 				}
 			}
@@ -309,11 +311,14 @@ class Interviewer {
 	 * @param message string message to log
 	 */
 	logIncomingMessage(message) {
-		var t = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '') 
-		var s = t + "|" + this.client.id + "|" + this.lastQuestionNumber + "|" + message + "\n";
+		let t = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '') 
+		let s = t + "|" + this.client.id + "|" + this.lastQuestionNumber + "|" + message + "\n";
 		fs.appendFile('txt/log.txt', s, function (err) {
 		  if (err) throw err;
 		});
+
+		let messageJSON = {"time": t, "message": message, "question": this.lastQuestionNumber, "clientID": this.client.id, "fromClient": true}
+		this.log.push(messageJSON)
 	}
 
 	/**
@@ -328,6 +333,9 @@ class Interviewer {
 		}
 		setTimeout(function(){
 			that.client.emit('chat', "Chakubot: " + message)
+			let t = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '')
+			let messageJSON = {"time": t, "message": message, "question": that.lastQuestionNumber, "clientID": that.client.id, "fromClient": false}
+			that.log.push(messageJSON)
 		}, delay);
 	}
 
@@ -362,8 +370,20 @@ class Interviewer {
 	botLeave() {
 		let that = this;
 		setTimeout(function(){
-			that.client.emit('chat', "[Chakubot left the chatroom]")
+			that.client.emit('chat', "[Chakubot left the chatroom]");
+			that.finishConversation();
 		}, 300);
+	}
+
+	/**
+	 * Sends the log to the database + emails report to company depending on settings
+	 */
+	finishConversation() {
+		// TODO send log to server and store under company
+		// console.log(this.log)
+		fs.appendFile('txt/logclient.txt', JSON.stringify(this.log) + "\n", function (err) {
+		  if (err) throw err;
+		});
 	}
 }
 
@@ -385,6 +405,7 @@ const chat = function(client) {
 
 	client.on('disconnect', function(){
 		console.log('user disconnected');
+		interviewer.finishConversation();
 		interviewer.logIncomingMessage('user disconnected')
 		interviewer = null;
 	});

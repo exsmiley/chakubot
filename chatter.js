@@ -1,5 +1,6 @@
 var fs = require('fs');
-var analyzer = require('./analyzer')
+var analyzer = require('./analyzer');
+var db = require('./dbConnector');
 
 // LOAD initial data
 questionData = {"-1": {"next": [], "questions": [], "topic": "none"}}
@@ -52,6 +53,8 @@ fs.readFile('txt/cuss.txt', 'utf8', function (err,data) {
 	}
 	cuss = new Set(data.split("\n"));
 });
+
+// db.getLog("test1", "test1", console.log);
 
 /**
  * Finds out if the message has an English cuss word

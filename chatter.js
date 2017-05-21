@@ -20,8 +20,8 @@ function populateQuestions(data) {
 		nextNodes = info[1].split(",")
 		topic = info[2]
 		qs = info.slice(3) // gets all of them after and including 3
-		questionData[index] = {"next": nextNodes, "questions": qs}
-		questionData[-1]["next"].push([index])
+		questionData[index] = {"next": nextNodes, "questions": qs, "topic": topic}
+		questionData[-1]["next"].push(index)
 
 		if(topics.hasOwnProperty(topic)) {
 			topics[topic].push(index)
@@ -53,8 +53,6 @@ fs.readFile('txt/cuss.txt', 'utf8', function (err,data) {
 	}
 	cuss = new Set(data.split("\n"));
 });
-
-// db.getLog("test1", "test1", console.log);
 
 /**
  * Finds out if the message has an English cuss word
@@ -154,7 +152,7 @@ class Interviewer {
 		this.sendMessage("I will be asking you around " + this.maxNumQuestions + " questions.");
 		this.sendMessage("Are you ready for your interview to begin?");
 		this.lastAskedWords = "Are you ready for your interview to begin?"
-		this.log = []
+		this.logIndex = 0
 	}
 
 	/**
@@ -243,6 +241,7 @@ class Interviewer {
 	 */
 	getNextQuestionNumber(num) {
 		const nextNums = questionData[num]["next"]
+		const oldTopic = questions[num]["topic"]
 		let nextPossible = []
 
 		for(let num of nextNums) {
@@ -250,30 +249,25 @@ class Interviewer {
 				nextPossible.push(num)
 			}
 		}
-		console.log(nextPossible)
+		// has the next possible in the same category at this point
 
-		if(nextPossible.length == 0) {
+		// if no more possible questions, too many questions in this topic, or randomly chosen to move
+		if(nextPossible.length == 0 || this.topicTallies[oldTopic] >= 3 || Math.random() < 0.15) {
 			// find new topic
-			const oldTopic = questions[num]["topic"]
+			const newTopic = this.chooseNewTopic()
 
-			// 15% chance of a transition of topic
-			if(this.topicTallies[oldTopic] >= 3 || Math.random() > 0.85) {
-				// randomly choose new topic
-				const newTopic = this.chooseNewTopic()
+			if(newTopic == -1) {
+				return -1
+			} else {
+				nextPossible = [];
 
-				if(newTopic == -1) {
-					return -1
-				} else {
-					nextPossible = [];
-
-					for(let num of topics) {
-						if(!this.questionsAsked.has(num)) {
-							nextPossible.push(num)
-						}
+				for(let num of topics[newTopic]) {
+					if(!this.questionsAsked.has(num)) {
+						nextPossible.push(num)
 					}
-					console.log(nextPossible)
-					return nextPossible[Math.floor(Math.random()*nextPossible.length)]
 				}
+
+				return nextPossible[Math.floor(Math.random()*nextPossible.length)]
 			}
 		} else {
 			return nextPossible[Math.floor(Math.random()*nextPossible.length)]
@@ -314,14 +308,9 @@ class Interviewer {
 	 * @param message string message to log
 	 */
 	logIncomingMessage(message) {
-		let t = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '') 
-		let s = t + "|" + this.client.id + "|" + this.lastQuestionNumber + "|" + message + "\n";
-		fs.appendFile('txt/log.txt', s, function (err) {
-		  if (err) throw err;
-		});
-
-		let messageJSON = {"time": t, "message": message, "question": this.lastQuestionNumber, "clientID": this.client.id, "fromClient": true}
-		this.log.push(messageJSON)
+		let messageJSON = {"message": message, "question_id": this.lastQuestionNumber, "company_id": this.companyId, "interview_id": this.client.id, "from_client": true, "log_index": this.logIndex}
+		db.insertLog(messageJSON);
+		this.logIndex += 1
 	}
 
 	/**
@@ -336,9 +325,9 @@ class Interviewer {
 		}
 		setTimeout(function(){
 			that.client.emit('chat', "Chakubot: " + message)
-			let t = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '')
-			let messageJSON = {"time": t, "message": message, "question": that.lastQuestionNumber, "clientID": that.client.id, "fromClient": false}
-			that.log.push(messageJSON)
+			let messageJSON = {"message": message, "question_id": that.lastQuestionNumber, "company_id": that.companyId, "interview_id": that.client.id, "from_client": false, "log_index": this.logIndex}
+			db.insertLog(messageJSON);
+			that.logIndex += 1
 		}, delay);
 	}
 
@@ -382,11 +371,7 @@ class Interviewer {
 	 * Sends the log to the database + emails report to company depending on settings
 	 */
 	finishConversation() {
-		// TODO send log to server and store under company
-		// console.log(this.log)
-		fs.appendFile('txt/logclient.txt', JSON.stringify(this.log) + "\n", function (err) {
-		  if (err) throw err;
-		});
+		//  TODO send to company if the setting is set
 	}
 }
 

@@ -8,33 +8,44 @@ app.controller('reportController', function($scope, $routeParams, $http) {
 	     method: "GET",
 	     params: {"companyId": $scope.params.companyId, "interviewId": $scope.params.interviewId}  
 	}).then(function(res) {
-		console.log(res)
-		// console.log(res.data)
+		console.log(res.data)
 		$scope.data = format_log(res.data)
-		// $scope.$apply()
 		})
 
 	function format_log(log) {
-		// TODO make RDS DB on AWS
-		// TODO make SQL queries + store log on RDS
-		// let keep = [[]];
-		// let placeholder = 0;
-		// let questionNum = -1;
+		data = {"answers": {"-1": ""}, "questions": {"-1": ""}}
 
-		// for(let entry of log) {
-		// 	if(entry.question === questionNum) {
-		// 		placeholder += 1
-		// 	} else if(questionNum !== -1) {
-		// 		placeholder = 1;
-		// 		questionNum += 1;
-		// 		keep.push([]);
-		// 	}
+		for(let entry of log) {
+			if(entry.from_client) {
+				// TODO FIX assumes each answer is only 1 entry
+				if(!data["answers"].hasOwnProperty(entry.question_id)) {
+					data["answers"][entry.question_id] = {"response": entry.message, "index": entry.log_index, "id": entry.question_id}
+				}
+			} else {
+				data["questions"][entry.question_id] = {"response": entry.message, "index": entry.log_index}
+			}
+			
+		}
 
-		// 	if(placeholder >= 2) {
-		// 		keep[keep.length-1].push(entry)
-		// 	}
-		// }
+		delete data["answers"]["-1"]
+		delete data["questions"]["-1"]
 
-		return log
+		// handle answers
+		let answers = []
+		for(let key in data["answers"]) {
+			answer = data["answers"][key]
+			answers.push(answer)
+		}
+		answers.sort(function(a, b) {return a.index > b.index})
+
+		// handle questions
+		let questions = []
+		for(let key in data["questions"]) {
+			q = data["questions"][key]
+			questions.push(q)
+		}
+		questions.sort(function(a, b) {return a.index > b.index})
+
+		return {"answers": answers, "questions": questions}
 	}
 });

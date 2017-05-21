@@ -6,7 +6,7 @@
 5||business|What is the problem you want to solve and how do you plan on doing it?
 6||business|Can you describe your product or service?
 7||business|How do you make money?
-8|8|business|How do you define your short-term and long-term success metrics?
+8|9|business|How do you define your short-term and long-term success metrics?
 9||business|What is your progress so far?|How is your traction as of now?
 10||market|What is your market size? What is the math or source behind how you got that number?
 11|11|market|Who are 3 of your competitors?
@@ -14,9 +14,9 @@
 12||market|Where does your entry barrier come from?
 13||market|What are your advantages?
 14||market|If you have not already gone to market, what is your go-to-market strategy?
-15|14|tech|Highlight the technology of your product|What are the highlights of your technology?
+15|16|tech|Highlight the technology of your product|What are the highlights of your technology?
 16||tech|Why are they critical to your success?
-17|16|tech|Do you have any patents?
+17|18|tech|Do you have any patents?
 18||tech|What are they?
 19||tech|What is your current stage of development?
 20||founder|What does your company's equity structure look like?

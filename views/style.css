@@ -50,7 +50,7 @@ input { width: 100%; padding: .5em 1em; }
   color: #fcfeff;
 }
 .navbar-default .navbar-link:hover {
-  color: #ffffff;
+  color: #aaaaaa;
 }
 
 @media (max-width: 767px) {
@@ -64,7 +64,7 @@ input { width: 100%; padding: .5em 1em; }
   .navbar-default .navbar-nav .open .dropdown-menu > .active > a,
   .navbar-default .navbar-nav .open .dropdown-menu > .active > a:hover,
   .navbar-default .navbar-nav .open .dropdown-menu > .active > a:focus {
-    color: #ffffff;
+    color: #aaaaaa;
     background-color: #ad66f4;
   }
 }

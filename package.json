@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/exsmiley/chakubot#readme",
   "dependencies": {
+    "crypto": "0.0.3",
     "express": "^4.15.2",
     "express-session": "^1.15.2",
     "http": "0.0.0",

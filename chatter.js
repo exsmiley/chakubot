@@ -78,7 +78,7 @@ function containsCussWord(message) {
  * @return true if the question says yes
  */
 function isYes(message) {
-	const yesWords = ["yes", "yeah", "of course", "mhm", "sure", "fine"];
+	const yesWords = ["yes", "yeah", "of course", "mhm", "sure", "fine", "okay"];
 	let yes = false;
 
 	for(let word of yesWords) {
@@ -241,7 +241,7 @@ class Interviewer {
 	 */
 	getNextQuestionNumber(num) {
 		const nextNums = questionData[num]["next"]
-		const oldTopic = questions[num]["topic"]
+		const oldTopic = questionData[num]["topic"]
 		let nextPossible = []
 
 		for(let num of nextNums) {
@@ -325,7 +325,7 @@ class Interviewer {
 		}
 		setTimeout(function(){
 			that.client.emit('chat', "Chakubot: " + message)
-			let messageJSON = {"message": message, "question_id": that.lastQuestionNumber, "company_id": that.companyId, "interview_id": that.client.id, "from_client": false, "log_index": this.logIndex}
+			let messageJSON = {"message": message, "question_id": that.lastQuestionNumber, "company_id": that.companyId, "interview_id": that.client.id, "from_client": false, "log_index": that.logIndex}
 			db.insertLog(messageJSON);
 			that.logIndex += 1
 		}, delay);
@@ -371,13 +371,14 @@ class Interviewer {
 	 * Sends the log to the database + emails report to company depending on settings
 	 */
 	finishConversation() {
-		//  TODO send to company if the setting is set
+		//  TODO send email to company if the setting is set
 	}
 }
 
 // exported and handles the direct interactions with the socket
 const chat = function(client) {
 	console.log("a user connected")
+	console.log(client.id)
 	let interviewer = new Interviewer(client)
 	interviewer.logIncomingMessage("user connected")
 

@@ -1,36 +1,30 @@
 <div class="container">
-<div class="panel panel-default">
+<div class="row"><h3 class="col-xs-10"> Report for {{params.interviewId}}</h3><button class="btn col-xs-2" ng-click="submitScores()">Submit Scores</button></div>
+<div class="alert alert-success" ng-show="warning==='success'">
+  <strong>Success!</strong> Updated the scores on the server.
+</div>
+<div class="alert alert-danger" ng-show="warning==='failed'">
+  <strong>Failed!</strong> Something went wrong on the server.
+</div>
+<div class="panel panel-default" ng-repeat="question in questions">
   <div class="panel-heading">
-    <h3 class="panel-title">Question 1: What is your company's name?</h3>
+    <h3 class="panel-title">Question {{question.listIndex}}: {{question.question}}</h3>
   </div>
   <div class="panel-body">
     <div class="col-xs-10">
     	<ul class="list-group">
-		  <li class="list-group-item">Reply 1</li>
-		  <li class="list-group-item">Reply 2</li>
+		  <li class="list-group-item" ng-repeat="answer in question.answers">{{answer.response}}</li>
 		</ul>
 	</div>
 	<div class="col-xs-2">
-    	Topic: General Information
-    	<input type="text">
+      Topic: {{questionMap[question.id]}}
+      <div class="input-group">
+      <span class="input-group-addon" id="basic-addon3">Score: </span>
+      <input type="text" class="form-control" aria-describedby="basic-addon3" ng-model="question.score">
+    </div>
     </div>
   </div>
 </div>
-<div class="panel panel-default">
-  <div class="panel-heading">
-    <h3 class="panel-title">Question 2: What does your company do?</h3>
-  </div>
-  <div class="panel-body">
-    <div class="col-xs-10">
-    	<ul class="list-group">
-		  <li class="list-group-item">Reply 1</li>
-		</ul>
-	</div>
-	<div class="col-xs-2">
-    	Topic: Operations
-    	<input type="text">
-    </div>
-  </div>
-</div>
-{{data}}
+{{questions}}
+<div class="row"><p class="col-xs-10"> Submit scores for answers to aid us in making our scoring system better.</p><button class="btn col-xs-2" ng-click="submitScores()">Submit Scores</button></div>
 </div>

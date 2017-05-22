@@ -5,6 +5,7 @@ var db = require('./dbConnector');
 // LOAD initial data
 questionData = {"-1": {"next": [], "questions": [], "topic": "none"}}
 topics = {} // topic: [index, index, ...]
+index2topic = {}
 neutal = []
 cuss = new Set();
 
@@ -27,6 +28,13 @@ function populateQuestions(data) {
 			topics[topic].push(index)
 		} else {
 			topics[topic] = [index]
+		}
+	}
+
+	// make reverse topic mapper
+	for(let topic in topics) {
+		for(let index of topics[topic]) {
+			index2topic[index] = topic
 		}
 	}
 }
@@ -375,8 +383,10 @@ class Interviewer {
 	}
 }
 
+funcs = {}
+
 // exported and handles the direct interactions with the socket
-const chat = function(client) {
+funcs.chat = function(client) {
 	console.log("a user connected")
 	console.log(client.id)
 	let interviewer = new Interviewer(client)
@@ -400,5 +410,10 @@ const chat = function(client) {
 	});
 }
 
+// returns a map mapping question indices to the corresponding topic
+funcs.topicMap = function() {
+	return index2topic;
+}
 
-module.exports = chat
+
+module.exports = funcs

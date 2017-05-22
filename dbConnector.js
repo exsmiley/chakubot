@@ -48,8 +48,32 @@ funcs.insertLog = function(data) {
 // also OMG console.log is a valid callback function
 funcs.getLog = function(companyId, interviewId, callback) {
 	doQuery("SELECT * FROM chat_logs WHERE company_id=? AND interview_id=? ORDER by log_index", [companyId, interviewId], function(err, results) {
-		callback(results)
+		if(!err)
+			callback(results)
+		else
+			callback([])
 	});
+}
+
+// gets a list of IDs for entrepreneurs that were interviewed by this company
+funcs.getInterviewed = function(companyId, callback) {
+	doQuery("SELECT DISTINCT interview_id FROM chat_logs WHERE company_id=?", [companyId], function(err, results) {
+		if(!err)
+			callback(results)
+		else
+			callback([])
+	});
+}
+
+// updates the score for an entry in the interview
+funcs.updateInterviewScore = function(companyId, interviewId, logIndex, score, callback) {
+	doQuery("UPDATE chat_logs SET score=? WHERE company_id=? AND interview_id=? AND log_index=?", [score, companyId, interviewId, logIndex], function(err, results) {
+		if(err) {
+			callback(false)
+		} else {
+			callback(true)
+		}
+	})
 }
 
 // adds a new user to the database
@@ -69,5 +93,8 @@ funcs.getUserFromEmail = function(email, callback) {
 		callback(results)
 	});
 }
+
+// doQuery("UPDATE chat_logs SET company_id=? WHERE company_id=?", ['904c3560-3eac-11e7-8e53-afd21b146553', '904c3560-3eac-11e7-8e53-a'], console.log)
+// doQuery("SELECT DISTINCT interview_id FROM chat_logs WHERE company_id=?", ['904c3560-3eac-11e7-8e53-a'], console.log)
 
 module.exports = funcs;

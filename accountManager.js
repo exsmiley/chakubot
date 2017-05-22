@@ -31,9 +31,13 @@ funcs.makeAccount = function(email, pwd, companyName, callback) {
 
 			data["password"] = hashPassword(pwd, generateSalt());
 			data["company_id"] = uuidV1()
-			db.addUser(data, callback)
+			db.addUser(data, function(success) {
+				delete data["password"]
+				delete data["logtime"]
+				callback(success, data)
+			})
 		} else {
-			callback(false)
+			callback(false, {})
 		}
 	})
 }
@@ -42,13 +46,20 @@ funcs.makeAccount = function(email, pwd, companyName, callback) {
 funcs.checkLogin = function(email, pwd, callback) {
 	db.getUserFromEmail(email, function(results) {
 		if(!results) {
-			callback(false)
+			callback(false, {})
 		}
 
 		const oldPwd = results[0]["password"];
 		const salt = oldPwd.substr(0, 10);
 		const enteredPwd = hashPassword(pwd, salt);
-		callback(oldPwd === enteredPwd);
+		if(oldPwd === enteredPwd) {
+			let data = results[0]
+			delete data["password"]
+			delete data["logtime"]
+			callback(true, data);
+		} else {
+			callback(false, {})
+		}
 	})
 }
 

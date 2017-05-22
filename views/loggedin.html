@@ -29,10 +29,11 @@
             <div class="navbar-header">
                 <a class="navbar-brand" href="/">Chakubot</a>
             </div>
-            <div class="navbar-right">  
+            <ul class="nav navbar-nav navbar-right">
+                <li><a ng-show="userInfo.email.length > 0;"> Logged in as {{userInfo.email}}</a></li>
                 <!-- Trigger the modal with a button -->
-                <button type="button" class="btn btn-info btn-lg" ng-click="logout()">Logout</button>
-            </div>
+                <li><button type="button" class="btn btn-info btn-lg" ng-click="logout()">Logout</button></li>
+            </ul>
         </div>
     </nav>
 

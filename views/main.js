@@ -14,16 +14,7 @@ app.config(function($routeProvider, $locationProvider) {
 			// controller  : 'homeController'
 		})
 
-		// // route for the report page
-		.when('/report', {
-			templateUrl : 'pages/report.html',
-		})
-
-		.when('/profile/:companyId', {
-			templateUrl : 'pages/report.html',
-		})
-
-		.when('/profile/:companyId/report/:interviewId', {
+		.when('/report/:interviewId', {
 			templateUrl : 'pages/report.html',
 			controller  : 'reportController'
 		})

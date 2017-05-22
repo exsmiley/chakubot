@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chakubot - Chatbot for helping Investors</title>
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="/style.css">
+
+    <!-- Angular.js files -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-sanitize.js""></script>
+    <script src="/js/loginController.js"></script>
+</head>
+
+<body ng-app="chakubot" ng-controller="loginController">
+    <!-- header -->
+    <nav class="navbar navbar-default">
+      <div class="container">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="/">Chakubot</a>
+        </div>
+        <div class="navbar-right">  
+            <!-- Trigger the modal with a button -->
+            <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal" ng-click="isLogin(true)">Log In</button>
+        </div>
+    </div>
+</nav>
+
+
+<div id="main">
+    <!-- angular templating -->
+    <!-- this is where content will be injected -->
+    <div class="container">
+      <div class="jumbotron">
+        <h1>Chakubot</h1> 
+        <p>Chakubot is the chatbot your firm needs for finding candidates.</p>
+        <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal" ng-click="isLogin(false)">Sign Up!</button>
+    </div>
+    <p>Made by Li Bian and Zachery Miranda.</p> 
+</div>
+
+<!-- Modal -->
+<div id="myModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title" ng-show="login">Login to your Account</h4>
+        <h4 class="modal-title" ng-hide="login">Sign Up for a New Account!</h4>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal" role="form">
+            <div class="alert alert-danger" ng-show="warning.length > 0">
+              <strong>Failed!</strong> {{warning}}
+          </div>
+          <!-- Login -->
+          <div ng-show="login">
+            <!-- <p>Login.</p> -->
+            <div class="form-group">
+                <label for="email" class="col-sm-3 control-label">Email</label>
+                <div class="col-sm-9">
+                    <input type="type" id="email" placeholder="Email" class="form-control" ng-model="formData.email">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="password" class="col-sm-3 control-label">Password</label>
+                <div class="col-sm-9">
+                    <input type="password" id="password" placeholder="Password" class="form-control" ng-model="formData.password">
+                </div>
+            </div>
+        </div>
+
+        <!-- Sign Up -->
+        <div ng-hide="login">
+            <div class="form-group">
+                <label for="companyName" class="col-sm-3 control-label">Company Name</label>
+                <div class="col-sm-9">
+                    <input type="type" id="companyName" placeholder="Company Name" class="form-control" ng-model="formData.companyName">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="email" class="col-sm-3 control-label">Email</label>
+                <div class="col-sm-9">
+                    <input type="type" id="email" placeholder="Email" class="form-control" ng-model="formData.email">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="password" class="col-sm-3 control-label">Password</label>
+                <div class="col-sm-9">
+                    <input type="password" id="password" placeholder="Password" class="form-control" ng-model="formData.password">
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+    <button ng-show="login" class="btn btn-primary" ng-click="doLogin()">Login!</button>
+    <button ng-hide="login" class="btn btn-primary" ng-click="doSignup()">Sign Up!</button>
+</div>
+</div>
+
+</div>
+</div>
+</div>
+
+<div class="container">
+    <footer>
+        <p> © 2017 </p>
+    </footer>
+</div>
+</body>
+</html>

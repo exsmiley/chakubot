@@ -1,5 +1,6 @@
-app.controller('mainController', function($scope, $routeParams, $http, $window) {
-	$scope.params = $routeParams;
+var app = angular.module('chakubot', ['ngSanitize']);
+
+app.controller('loginController', function($scope, $http, $window) {
 	$scope.login = true;
 	$scope.formData = {};
 	$scope.warning = "";

@@ -29,7 +29,7 @@ app.config(function($routeProvider, $locationProvider) {
 		})
 
 		.otherwise({
-		    redirectTo: '/list'
+		    templateUrl : 'pages/404.html',
 		});
 
 		// use the HTML5 History API to get the pretty urls without a weird /#/ between relevant info

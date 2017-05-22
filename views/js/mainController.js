@@ -1,35 +1,15 @@
 app.controller('mainController', function($scope, $routeParams, $http, $window) {
 	$scope.params = $routeParams;
-	$scope.login = true;
-	$scope.formData = {};
-	$scope.warning = "";
 
-	// sets login to true or false
-	$scope.isLogin = function(val) {
-		$scope.login = val
-	}
-
-	$scope.doLogin = function() {
-		$http.post("/api/login", {"email": $scope.formData.email, "pwd": $scope.formData.password}, {}).then(function(response) {
-			if(response.data.loggedIn) {
-				// redirect to logged in
-				$window.location = "/"
-			} else {
-				// warning about user/pass
-				$scope.warning = "Email or Password is incorrect!"
-			}
+	$http.get("/api/myinfo").then(function(response) {
+		$scope.email = response.data.email
+		$scope.companyName = response.data.companyName
+		$scope.embedUrl = response.data.companyId
+	});
+	$scope.logout = function() {
+		$http.get("/logout").then(function(response) {
+			$window.location = "/"
 		});
 	}
 
-	$scope.doSignup = function() {
-		$http.post("/api/signup", {"email": $scope.formData.email, "pwd": $scope.formData.password, "companyName": $scope.formData.companyName}, {}).then(function(response) {
-			if(response.data.accountMade) {
-				// redirect to logged in
-				$window.location = "/"
-			} else {
-				// warning about user/pass
-				$scope.warning = "Email already has an account!"
-			}
-		});
-	}
 });

@@ -74,9 +74,8 @@ app.post('/api/login', function(req, res) {
 
 // logs the user out
 app.get('/logout', function(req, res) {
-    console.log("logging out?")
     req.session.loggedIn = false
-    res.redirect("/")
+    res.redirect('/')
 })
 
 // VIEW ROUTES

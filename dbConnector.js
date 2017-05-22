@@ -38,7 +38,6 @@ let funcs = {}
 // needs to have the fields: company_id, interview_id, log_index, message, question_id, and from_client
 funcs.insertLog = function(data) {
 	doQuery("INSERT INTO chat_logs SET ?", data, function(err, results) {
-		// TODO add print?
 		if(err) {
 			console.log("failed to add", data)
 		}
@@ -52,26 +51,22 @@ funcs.getLog = function(companyId, interviewId, callback) {
 		callback(results)
 	});
 }
-// let t = "SELECT * FROM accounts"
-// let t = "CREATE TABLE accounts (    logtime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,    company_id VARCHAR(25) NOT NULL,    company_name VARCHAR(255) NOT NULL,    email VARCHAR(255) NOT NULL,    password VARCHAR(255) NOT NULL,    is_main_account BOOLEAN NOT NULL,    authorization_level INT NOT NULL,        PRIMARY KEY( company_id ) );"
-// const connection = mysql.createConnection(connect_info);
-// 	var query = connection.query(t, function(err, results) {
-// 		console.log(err)
-// 		console.log(results)
-// 	})
-// 	connection.end();
 
 // adds a new user to the database
 funcs.addUser = function(data, callback) {
-	// TODO validate user doesn't exist
 	doQuery("INSERT INTO accounts SET ?", data, function(err, results) {
-		// TODO add print?
 		if(err) {
-			console.log("failed to add", data)
 			callback(false)
 		} else {
 			callback(true)
 		}
+	});
+}
+
+// used for checking if the email exists
+funcs.getUserFromEmail = function(email, callback) {
+	doQuery("SELECT * FROM accounts WHERE email=?", [email], function(err, results) {
+		callback(results)
 	});
 }
 

@@ -6,6 +6,7 @@ var server = http.createServer(app);
 var io = require('socket.io')(server);
 var chatter = require('./chatter')
 var db = require('./dbConnector');
+var am = require('./accountManager')
 
 // application assets
 app.use(express.static('views'));

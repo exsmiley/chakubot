@@ -1,7 +1,71 @@
 <div class="container">
   <div class="jumbotron">
     <h1>Chakubot</h1> 
-    <p>Chakubot is the chatbot your firm needs for finding candidates.</p> 
+    <p>Chakubot is the chatbot your firm needs for finding candidates.</p>
+    <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal" ng-click="isLogin(false)">Sign Up!</button>
   </div>
   <p>Made by Li Bian and Zachery Miranda.</p> 
+</div>
+
+<!-- Modal -->
+<div id="myModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title" ng-show="login">Login to your Account</h4>
+        <h4 class="modal-title" ng-hide="login">Sign Up for a New Account!</h4>
+      </div>
+      <div class="modal-body">
+      	<form class="form-horizontal" role="form">
+      	<!-- Login -->
+      	<div ng-show="login">
+      		<!-- <p>Login.</p> -->
+      		<div class="form-group">
+                <label for="email" class="col-sm-3 control-label">Email</label>
+                <div class="col-sm-9">
+                    <input type="type" id="email" placeholder="Email" class="form-control" ng-model="email">
+                </div>
+            </div>
+      		<div class="form-group">
+                <label for="password" class="col-sm-3 control-label">Password</label>
+                <div class="col-sm-9">
+                    <input type="password" id="password" placeholder="Password" class="form-control" ng-model="password">
+                </div>
+            </div>
+      	</div>
+
+      	<!-- Sign Up -->
+        <div ng-hide="login">
+        	<div class="form-group">
+                <label for="companyName" class="col-sm-3 control-label">Company Name</label>
+                <div class="col-sm-9">
+                    <input type="type" id="companyName" placeholder="Company Name" class="form-control" ng-model="companyName">
+                </div>
+            </div>
+        	<div class="form-group">
+                <label for="email" class="col-sm-3 control-label">Email</label>
+                <div class="col-sm-9">
+                    <input type="type" id="email" placeholder="Email" class="form-control" ng-model="email">
+                </div>
+            </div>
+      		<div class="form-group">
+                <label for="password" class="col-sm-3 control-label">Password</label>
+                <div class="col-sm-9">
+                    <input type="password" id="password" placeholder="Password" class="form-control" ng-model="password">
+                </div>
+            </div>
+        </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+      	<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        	<button ng-show="login" class="btn btn-primary" ng-click="doLogin()">Login!</button>
+      	<button ng-hide="login" class="btn btn-primary" ng-click="doSignup()">Sign Up!</button>
+      </div>
+    </div>
+
+  </div>
 </div>

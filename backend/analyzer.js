@@ -5,7 +5,7 @@ var analyzer = {}
 analyzer.findSimilar = function(num, message, callback) {
 	var options = {
 	  mode: 'text',
-	  scriptPath: 'py',
+	  scriptPath: '../py',
 	  pythonOptions: ['-u'],
 	  args: [num, message]
 	};

@@ -57,7 +57,7 @@ funcs.getLog = function(companyId, interviewId, callback) {
 
 // gets a list of IDs for entrepreneurs that were interviewed by this company
 funcs.getInterviewed = function(companyId, callback) {
-	doQuery("SELECT DISTINCT interview_id FROM chat_logs WHERE company_id=?", [companyId], function(err, results) {
+	doQuery("SELECT interview_id FROM chat_logs WHERE company_id=? AND message='Thank you for taking the time for this interview!'", [companyId], function(err, results) {
 		if(!err)
 			callback(results)
 		else
@@ -92,6 +92,22 @@ funcs.getUserFromEmail = function(email, callback) {
 	doQuery("SELECT * FROM accounts WHERE email=?", [email], function(err, results) {
 		callback(results)
 	});
+}
+
+// gets the emails of everyone that wants an email sent everytime TODO adjust based on setting
+funcs.getEmailsFromCompanyId = function(companyId, callback) {
+	doQuery("SELECT email FROM accounts WHERE company_id=?", [companyId], function(err, results) {
+		if(err) {
+			callback([])
+		}
+		else {
+			let emails = []
+			for(let result of results) {
+				emails.push(result.email)
+			}
+			callback(emails)
+		}	
+	})
 }
 
 // doQuery("UPDATE chat_logs SET company_id=? WHERE company_id=?", ['904c3560-3eac-11e7-8e53-afd21b146553', '904c3560-3eac-11e7-8e53-a'], console.log)

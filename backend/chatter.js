@@ -1,6 +1,7 @@
 var fs = require('fs');
 var analyzer = require('./analyzer');
 var db = require('./dbConnector');
+var mailer = require('./mailer');
 
 // LOAD initial data
 questionData = {"-1": {"next": [], "questions": [], "topic": "none"}}
@@ -217,6 +218,7 @@ class Interviewer {
 				setTimeout(function(){ that.botLeave(); },700);
 				this.state = "finished"
 				this.lastQuestionNumber = -2
+				this.finishConversation(); // TODO move after score calculated
 
 				// give a moment for the last similarity score to come in
 				setTimeout(function(){
@@ -371,15 +373,19 @@ class Interviewer {
 		let that = this;
 		setTimeout(function(){
 			that.client.emit('chat', "[Chakubot left the chatroom]");
-			that.finishConversation();
+			// that.finishConversation();
 		}, 300);
 	}
 
 	/**
-	 * Sends the log to the database + emails report to company depending on settings
+	 * Emails report to company depending on settings
 	 */
 	finishConversation() {
-		//  TODO send email to company if the setting is set
+		const id = this.client.id
+		// sends email to company if the setting is set
+		db.getEmailsFromCompanyId(this.companyId, function(emails) {
+			mailer.interviewEmail(emails, id)
+		})
 	}
 }
 
@@ -404,7 +410,7 @@ funcs.chat = function(client) {
 
 	client.on('disconnect', function(){
 		console.log('user disconnected');
-		interviewer.finishConversation();
+		// interviewer.finishConversation();
 		interviewer.logIncomingMessage('user disconnected')
 		interviewer = null;
 	});

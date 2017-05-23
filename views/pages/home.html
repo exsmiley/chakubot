@@ -7,4 +7,5 @@
 <ul class="list-group">
   <li class="list-group-item" ng-repeat="report in reports">Interview ID: <a href="/report/{{report.interview_id}}">{{report.interview_id}}</a></li>
 </ul>
+<p ng-if="reports.length === 0">No interviews have been conducted yet</p>
 </div>

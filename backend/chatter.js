@@ -128,6 +128,30 @@ function selectQuestion(id) {
 }
 
 /**
+ * Extracts the company name from the message text
+ * @param text the message to extract the name from
+ * @return string of the company name
+ */
+function extractCompanyName(text) {
+	let lowerText = text.toLowerCase()
+	const stopWords = ["my", "is", "the", ".", "it"]
+
+	for(let word of stopWords) {
+		lowerText = lowerText.replace(word, "")
+	}
+
+	let words = lowerText.split(" ").filter(function(word){ return word.length > 0; })
+
+	if(words[0] === "company") {
+		words = words.slice(1,words.length)
+	}
+
+	words = words.map(function(word){return word[0].toUpperCase() + word.substring(1); })
+
+	return words.join(" ")
+}
+
+/**
  * Interviewer handles running the interview
  * @param client socket.io socket object to send messages to
  */
@@ -142,7 +166,10 @@ class Interviewer {
 		this.maxNumQuestions = 5;
 		this.questionsAsked = new Set()
 		this.companyId = client.request.session.companyId
+		this.specialQuestionNumbers = new Set([0])
 		// TODO query company name from database
+
+		// special things
 
 		// set up topic tallies
 		this.topicTallies = {}
@@ -211,8 +238,14 @@ class Interviewer {
 				that.numScores += 1
 			})
 
+			// handle some questions differently
+			let changedQuestion = false; // handles if a new question was asked in this flow
+			if(this.specialQuestionNumbers.has(this.lastQuestionNumber)) {
+				// TODO handle special question numbers
+			}
+
 			// handle advancing the question
-			if(this.numQuestionsAsked >= this.maxNumQuestions) {
+			if(this.numQuestionsAsked >= this.maxNumQuestions && !changedQuestion) {
 				this.sendMessage("Thank you for taking the time for this interview!")
 				this.sendMessage("I will report this to upper management and they will get back to you shortly.", 400);
 				setTimeout(function(){ that.botLeave(); },700);
@@ -224,7 +257,7 @@ class Interviewer {
 				setTimeout(function(){
 					console.log("The score is: ", that.totalScore/that.numScores)
 				},1500);
-			} else {
+			} else if(!changedQuestion) {
 				// add filler sentences between questions
 				this.sendMessage(neutral[Math.floor(Math.random()*neutral.length)]) // TODO check randomness
 

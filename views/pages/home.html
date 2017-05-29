@@ -2,7 +2,7 @@
   <div class="jumbotron">
     <h1>{{userInfo.company_name}} Home</h1> 
   </div>
-  <h3> Your embeddable chat link: <br><a>http://ec2-52-91-97-175.compute-1.amazonaws.com/chat/{{userInfo.company_id}}</a> </h3>
+  <h3> Your embeddable chat link: <br><a>chakubot.com/chat/{{userInfo.company_id}}</a> </h3>
   <h3>Submitted reports</h3>
 <ul class="list-group">
   <li class="list-group-item" ng-repeat="report in reports">Interview ID: <a href="/report/{{report.interview_id}}">{{report.interview_id}}</a></li>

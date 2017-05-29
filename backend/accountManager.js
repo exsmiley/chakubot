@@ -45,8 +45,8 @@ funcs.makeAccount = function(email, pwd, companyName, callback) {
 // checks if user can login
 funcs.checkLogin = function(email, pwd, callback) {
 	db.getUserFromEmail(email, function(results) {
-		if(!results) {
-			callback(false, {})
+		if(!results || results.length === 0) {
+			return callback(false, {})
 		}
 
 		const oldPwd = results[0]["password"];

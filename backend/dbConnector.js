@@ -110,9 +110,6 @@ funcs.getEmailsFromCompanyId = function(companyId, callback) {
 	})
 }
 
-doQuery("SELECT email FROM accounts", function(err, results) {
-	console.log(results)
-})
 // doQuery("UPDATE chat_logs SET company_id=? WHERE company_id=?", ['904c3560-3eac-11e7-8e53-afd21b146553', '904c3560-3eac-11e7-8e53-a'], console.log)
 // doQuery("SELECT DISTINCT interview_id FROM chat_logs WHERE company_id=?", ['904c3560-3eac-11e7-8e53-a'], console.log)
 

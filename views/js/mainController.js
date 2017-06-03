@@ -4,6 +4,7 @@ app.controller('mainController', function($scope, $routeParams, $http, $window) 
 	// gets general user information
 	$http.get("/api/userInfo").then(function(response) {
 		$scope.userInfo = response.data
+		$scope.link = "https://www.chakubot.com/chat/" + $scope.userInfo.company_id
 	});
 
 	// gets information about conducted interviews

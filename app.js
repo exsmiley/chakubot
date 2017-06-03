@@ -10,9 +10,19 @@ var chatter = require('./backend/chatter')
 var db = require('./backend/dbConnector');
 var am = require('./backend/accountManager')
 
+// forward to https
+function requireHTTPS(req, res, next) {
+  // The 'x-forwarded-proto' check is for Heroku
+  if (process.env.NODE_ENV === "production" && req.get('x-forwarded-proto') !== 'https') { //&& !req.secure 
+    return res.redirect('https://' + req.get('host') + req.url);
+  }
+  next();
+}
+
 // application assets
+app.use(requireHTTPS);
 app.use(express.static('views'));
-app.use( bodyParser.json() );       // to support JSON-encoded bodies
+app.use(bodyParser.json());       // to support JSON-encoded bodies
 app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
   extended: true
 })); 

@@ -4,7 +4,7 @@
   "description": "Chatbot to help investors judge startups",
   "main": "app.js",
   "scripts": {
-    "start": "node app.js"
+    "start": "export NODE_ENV=dev; node app.js"
   },
   "repository": {
     "type": "git",

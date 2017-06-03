@@ -13,6 +13,9 @@ var am = require('./backend/accountManager')
 // forward to https
 function requireHTTPS(req, res, next) {
   // The 'x-forwarded-proto' check is for Heroku
+  console.log(process.env.NODE_ENV)
+  console.log(req.get('x-forwarded-proto'))
+  console.log(req.secure)
   if (process.env.NODE_ENV === "production" && req.get('x-forwarded-proto') !== 'https') { //&& !req.secure 
     return res.redirect('https://' + req.get('host') + req.url);
   }

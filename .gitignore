@@ -41,5 +41,8 @@ jspm_packages
 # Mac OS X files
 .DS_Store
 
-# secret key
-*.pem
+# secret information
+secrets/*
+
+# update script on server
+update.sh

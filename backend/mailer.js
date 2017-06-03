@@ -1,12 +1,15 @@
-const nodemailer = require('nodemailer');
+let nodemailer = require('nodemailer');
+let aws = require('aws-sdk');
 
-// create reusable transporter object using the default SMTP transport
+// configure AWS SDK
+aws.config.loadFromPath('../secrets/config.json');
+
+// create Nodemailer SES transporter
 let transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-        user: 'chakubothelper@gmail.com',
-        pass: 'PlzhELpME8'
-    }
+    SES: new aws.SES({
+        apiVersion: '2010-12-01' // I think this might actually be the latest version so yay?
+    }),
+    sendingRate: 1 // max 1 messages/second
 });
 
 funcs = {}
@@ -14,14 +17,14 @@ funcs = {}
 funcs.interviewEmail = function(emails, interviewId) {
 	interviewHTML = `
 		<h2>New interview has been conducted!</h2>
-		<p>You can see the report <a href="ec2-52-91-97-175.compute-1.amazonaws.com/report/` + interviewId + `">here</a>!</p>
+		<p>You can see the report <a href="chakubot.com/report/` + interviewId + `">here</a>!</p>
 		<p>Thanks,</p>
 		<p>Chakubot</p>
 	`
 
 	// setup email data with unicode symbols
 	let mailOptions = {
-	    from: '"Chakubot" <chakubothelper@gmail.com>', // sender address
+	    from: '"Chakubot" <interviewer@chakubot.com>', // sender address
 	    to: emails, // list of receivers
 	    subject: 'New interview conducted', // Subject line
 	    // text: 'Hello world ?', // plain text body
@@ -33,7 +36,7 @@ funcs.interviewEmail = function(emails, interviewId) {
 	    if (error) {
 	        return console.log(error);
 	    }
-	    // console.log('Message %s sent: %s', info.messageId, info.response);
+	    console.log('Message %s sent: %s', info.messageId, info.response);
 	});
 }
 

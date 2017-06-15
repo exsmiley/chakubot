@@ -326,7 +326,7 @@ class Interviewer {
 				nextPossible = [];
 
 				for(let num of topics[newTopic]) {
-					if(!this.questionsAsked.has(num) || !questionData[num]["canStart"]) {
+					if(!this.questionsAsked.has(num) && !questionData[num]["canStart"]) {
 						nextPossible.push(num)
 					}
 				}

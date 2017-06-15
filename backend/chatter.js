@@ -19,10 +19,15 @@ function populateQuestions(data) {
 	for(let line of lines) {
 		info = line.split("|")
 		index = info[0]
-		nextNodes = info[1].split(",")
-		topic = info[2]
-		qs = info.slice(3) // gets all of them after and including 3
-		questionData[index] = {"next": nextNodes, "questions": qs, "topic": topic}
+		nextNodes = info[1].split(",") 
+		startingQuestion = false
+		if(info[2] === '') {
+			startingQuestion = true
+		}
+
+		topic = info[3]
+		qs = info.slice(4) // gets all of them after and including 3
+		questionData[index] = {"next": nextNodes, "questions": qs, "topic": topic, "canStart": startingQuestion}
 		questionData[-1]["next"].push(index)
 
 		if(topics.hasOwnProperty(topic)) {
@@ -87,7 +92,7 @@ function containsCussWord(message) {
  * @return true if the question says yes
  */
 function isYes(message) {
-	const yesWords = ["yes", "yeah", "of course", "mhm", "sure", "fine", "okay"];
+	const yesWords = ["yes", "yeah", "of course", "mhm", "sure", "fine", "okay", "yup", "yep"];
 	let yes = false;
 
 	for(let word of yesWords) {
@@ -163,10 +168,10 @@ class Interviewer {
 		this.state = "beginning";
 		this.lastQuestionNumber = -1; // number of last question asked
 		this.numQuestionsAsked = 0;
-		this.maxNumQuestions = 5;
+		this.maxNumQuestions = 10;
 		this.questionsAsked = new Set()
 		this.companyId = client.request.session.companyId
-		this.specialQuestionNumbers = new Set([0])
+		this.specialQuestionNumbers = new Set([0, 34])
 		// TODO query company name from database
 
 		// special things
@@ -215,6 +220,7 @@ class Interviewer {
 				const question = selectQuestion(0)
 				this.sendMessage(question, 300)
 				this.incrementTopicTally(0)
+				this.questionsAsked.add(0);
 				this.lastQuestionNumber = 0
 				this.numQuestionsAsked += 1
 				this.lastAskedWords = question
@@ -231,7 +237,7 @@ class Interviewer {
 				this.sendMessage("I will be asking you around " + this.maxNumQuestions + " questions to see if I think your idea is something we would like to invest in.");
 				this.sendMessage("Are you ready for your interview to begin?");
 			}
-		} else if(this.state == "question") {
+		} else if(this.state == "question" || this.state == "ending") {
 			// Gets the similarity score (TODO change number once have responses and use relevance score)
 			analyzer.findSimilar(0, message, function(results) {
 				that.totalScore += Number(results)
@@ -241,14 +247,29 @@ class Interviewer {
 			// handle some questions differently
 			let changedQuestion = false; // handles if a new question was asked in this flow
 			if(this.specialQuestionNumbers.has(this.lastQuestionNumber)) {
-				// TODO handle special question numbers
+				// handle special question numbers
+				if(this.lastQuestionNumber === 0) {
+					this.companyName = extractCompanyName(message)
+				} else if(this.lastQuestionNumber === 34) {
+					// assumes just sends email
+					this.companyEmail = message
+					let data = {"interview_company_name": this.companyName,
+								"interview_email": this.companyEmail,
+								"interview_id": this.client.id, "company_id": this.companyId}
+					db.addInterview(data, function(result){})
+				}
 			}
 
 			// handle advancing the question
-			if(this.numQuestionsAsked >= this.maxNumQuestions && !changedQuestion) {
+			if(this.numQuestionsAsked >= this.maxNumQuestions && !changedQuestion & this.state !== "ending") {
+				this.state = "ending"
+				this.lastQuestionNumber = 34
+				const question = selectQuestion(34)
+				this.sendMessage(question, 300)
+			} else if(this.state === "ending") {
 				this.sendMessage("Thank you for taking the time for this interview!")
 				this.sendMessage("I will report this to upper management and they will get back to you shortly.", 400);
-				setTimeout(function(){ that.botLeave(); },700);
+				setTimeout(function(){ that.botLeave(); }, 700);
 				this.state = "finished"
 				this.lastQuestionNumber = -2
 				this.finishConversation(); // TODO move after score calculated
@@ -305,7 +326,7 @@ class Interviewer {
 				nextPossible = [];
 
 				for(let num of topics[newTopic]) {
-					if(!this.questionsAsked.has(num)) {
+					if(!this.questionsAsked.has(num) || !questionData[num]["canStart"]) {
 						nextPossible.push(num)
 					}
 				}
@@ -415,9 +436,10 @@ class Interviewer {
 	 */
 	finishConversation() {
 		const id = this.client.id
+		const name = this.companyName
 		// sends email to company if the setting is set
 		db.getEmailsFromCompanyId(this.companyId, function(emails) {
-			mailer.interviewEmail(emails, id)
+			mailer.interviewEmail(emails, id, name)
 		})
 	}
 }
@@ -426,8 +448,6 @@ funcs = {}
 
 // exported and handles the direct interactions with the socket
 funcs.chat = function(client) {
-	console.log("a user connected")
-	console.log(client.id)
 	let interviewer = new Interviewer(client)
 	interviewer.logIncomingMessage("user connected")
 
@@ -442,7 +462,6 @@ funcs.chat = function(client) {
 	});
 
 	client.on('disconnect', function(){
-		console.log('user disconnected');
 		// interviewer.finishConversation();
 		interviewer.logIncomingMessage('user disconnected')
 		interviewer = null;

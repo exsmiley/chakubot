@@ -1,34 +1,35 @@
-0|1|general|What is the name of your company?
-1||general|What are some quick highlights of your company?
-2||general|Can you send me a link to your website and/or a demo of your product?
-3||general|What are 5 TAGs for your company?
-4||business|Who are your target customers?
-5||business|What is the problem you want to solve and how do you plan on doing it?
-6||business|Can you describe your product or service?
-7||business|How do you make money?
-8|9|business|How do you define your short-term and long-term success metrics?
-9||business|What is your progress so far?|How is your traction as of now?
-10||market|What is your market size? What is the math or source behind how you got that number?
-11|11|market|Who are 3 of your competitors?
-12||market|What is your position in terms of your competitors?
-12||market|Where does your entry barrier come from?
-13||market|What are your advantages?
-14||market|If you have not already gone to market, what is your go-to-market strategy?
-15|16|tech|Highlight the technology of your product|What are the highlights of your technology?
-16||tech|Why are they critical to your success?
-17|18|tech|Do you have any patents?
-18||tech|What are they?
-19||tech|What is your current stage of development?
-20||founder|What does your company's equity structure look like?
-21||founder|How did you come up with this business?
-22||founder|How did you meet each other?|How long have you guys known each other?
-23||founder|What does each founder do for the company?
-24||founder|Who is fulltime and parttime?
-25||founder|Can you send me linkedin URLs of all of your team members?
-26||funding|How much funding are you asking for?
-27||funding|Do you have a time table for this round?
-28||funding|How much have you raised so far? With whom?
-29||funding|What is the goal that you want to achieve with our help?
-30||other|Do you have any potential legal or regulative issues to deal with?
-31||other|Who are your advisors?
-32||other|Is there anything else you would like to tell potential investors?
+0|1||general|What is the name of your company?
+1|||general|What are some quick highlights of your company?
+2|||general|Can you send me a link to your website and/or a demo of your product?
+3|||general|What are 5 TAGs for your company?
+4|||business|Who are your target customers?
+5|||business|What is the problem you want to solve and how do you plan on doing it?
+6|||business|Can you describe your product or service?
+7|||business|How do you make money?
+8|9||business|How do you define your short-term and long-term success metrics?
+9||false|business|What is your progress so far?|How is your traction as of now?
+10|||market|What is your market size? What is the math or source behind how you got that number?
+11|12,33||market|Who are 3 of your competitors?
+12|||market|What is your position in terms of your competitors?
+13|||market|Where does your entry barrier come from?
+14|||market|If you have not already gone to market, what is your go-to-market strategy?
+15|16||tech|Highlight the technology of your product|What are the highlights of your technology?
+16|||tech|Why are they critical to your success?
+17|18||tech|Do you have any patents?
+18||false|tech|What are they?
+19|||tech|What is your current stage of development?
+20|||founder|What does your company's equity structure look like?
+21|||founder|How did you come up with this business?
+22|||founder|How did you meet each other?|How long have you guys known each other?
+23|24||founder|What does each founder do for the company?
+24||false|founder|Who is fulltime and parttime?
+25|||founder|Can you send me linkedin URLs of all of your team members?
+26|28||funding|How much funding are you asking for?
+27|||funding|Do you have a time table for this round?
+28||false|funding|How much have you raised so far? With whom?
+29|||funding|What is the goal that you want to achieve with our help?
+30|||other|Do you have any potential legal or regulative issues to deal with?
+31|||other|Who are your advisors?
+32||false|other|Is there anything else you would like to tell potential investors?
+33||false|market|What are your advantages?
+34||false|general|What is an email we can reach you at?

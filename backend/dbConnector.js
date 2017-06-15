@@ -57,7 +57,7 @@ funcs.getLog = function(companyId, interviewId, callback) {
 
 // gets a list of IDs for entrepreneurs that were interviewed by this company
 funcs.getInterviewed = function(companyId, callback) {
-	doQuery("SELECT interview_id FROM chat_logs WHERE company_id=? AND message='Thank you for taking the time for this interview!'", [companyId], function(err, results) {
+	doQuery("SELECT interview_id, interview_company_name FROM interviews WHERE company_id=?", [companyId], function(err, results) {
 		if(!err)
 			callback(results)
 		else
@@ -107,6 +107,27 @@ funcs.getEmailsFromCompanyId = function(companyId, callback) {
 			}
 			callback(emails)
 		}	
+	})
+}
+
+// adds a new interview to the interviews table
+funcs.addInterview = function(data, callback) {
+	doQuery("INSERT INTO interviews SET ?", data, function(err, results) {
+		if(err) {
+			callback(false)
+		} else {
+			callback(true)
+		}
+	});
+}
+
+funcs.getInterviewedName = function(interviewId, callback) {
+	doQuery("SELECT interview_company_name FROM interviews WHERE interview_id=?", [interviewId], function(err, results) {
+		if(err) {
+			callback([])
+		} else {
+			callback(results)
+		}
 	})
 }
 

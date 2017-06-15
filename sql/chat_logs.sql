@@ -6,6 +6,7 @@ CREATE TABLE chat_logs (
    message VARCHAR(255) NOT NULL,
    question_id INT NOT NULL,
    from_client BOOLEAN NOT NULL,
+   score INT,
    
    PRIMARY KEY( company_id, interview_id, log_index )
 );

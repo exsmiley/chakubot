@@ -11,6 +11,15 @@ app.controller('reportController', function($scope, $routeParams, $http) {
 		$scope.questions = format_log(res.data)
 		})
 
+	// gets all of the data from the interview
+	$http({
+	     url: "/api/interview_company_name", 
+	     method: "GET",
+	     params: {"interviewId": $scope.params.interviewId}  
+	}).then(function(res) {
+		$scope.name = res.data[0]['interview_company_name']
+		})
+
 	// gets a map of question ids to topics 
 	$http({
 	     url: "/api/question_map", 

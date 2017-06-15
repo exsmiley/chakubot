@@ -5,7 +5,7 @@
   <h3> Your embeddable chat link: <br><a src="{{link}}">{{link}}</a> </h3>
   <h3>Submitted reports</h3>
 <ul class="list-group">
-  <li class="list-group-item" ng-repeat="report in reports">Interview ID: <a href="/report/{{report.interview_id}}">{{report.interview_id}}</a></li>
+  <li class="list-group-item" ng-repeat="report in reports">Company: <a href="/report/{{report.interview_id}}">{{report.interview_company_name}}</a></li>
 </ul>
 <p ng-if="reports.length === 0">No interviews have been conducted yet</p>
 </div>

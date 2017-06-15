@@ -82,6 +82,20 @@ app.get('/api/interview_data', function(req, res) {
     }
 });
 
+// gets the data for a specific interview report based on companyId and interviewId
+app.get('/api/interview_company_name', function(req, res) {
+    if(req.session.loggedIn) {
+        const companyId = req.session.userInfo.company_id
+        const interviewId = req.query.interviewId
+
+        db.getInterviewedName(interviewId, function(results) {
+            res.send(results)
+        });   
+    } else {
+        res.send({})
+    }
+});
+
 // gets a JSON mapping question ids to the topic they are from
 app.get('/api/question_map', function(req, res) {
     if(req.session.loggedIn) {
